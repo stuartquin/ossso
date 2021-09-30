@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "ossso"
+version = "0.1.0"
+description = ""
+authors = ["Stuart Quin"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+Django = "^3.2.7"
+djangorestframework = "^3.12.2"
+psycopg2 = "^2.8.6"
+pysaml2 = "^7.0.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+ipdb = "^0.13.7"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
