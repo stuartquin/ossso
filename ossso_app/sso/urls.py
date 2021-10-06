@@ -1,5 +1,5 @@
 from django.urls import path
-from ossso.sso import views
+from sso import views
 
 urlpatterns = [
     path("acs/<str:guid>/", views.sso_acs, name="sso-acs"),

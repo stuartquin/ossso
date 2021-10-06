@@ -1,21 +1,5 @@
-"""
-This file contains the Django Views to support Single Sign On (SSO)
-with a SAML2 system, for example Okta.
-
-  `login` - is called to redirect the User login to the SSO system for signon
-  `acs` - is called by the SSO system once the User has authenticated
-
-"""
-
-# -----------------------------------------------------------------------------
-# System Imports
-# -----------------------------------------------------------------------------
 import logging
 from functools import lru_cache
-
-# -----------------------------------------------------------------------------
-# Public Imports
-# -----------------------------------------------------------------------------
 
 from saml2 import BINDING_HTTP_POST, BINDING_HTTP_REDIRECT, entity, SAMLError
 
@@ -24,19 +8,13 @@ from saml2.config import Config as Saml2Config
 
 from django.contrib.auth import login, load_backend
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponseRedirect, HttpResponse
-from django.utils.http import is_safe_url
-from django.urls import reverse
+from django.http import HttpResponseRedirect
 from django.core.handlers.wsgi import WSGIRequest
 from django.core.exceptions import PermissionDenied
 
-from ossso.sso.models import SAMLConnection
+from sso.models import SAMLConnection
 
 logger = logging.getLogger(__name__)
-
-SAML2_AUTH_CONFIG = {
-    "AUTHENTICATION_BACKEND": "django.contrib.auth.backends.RemoteUserBackend",
-}
 
 
 def get_metadata_xml(saml_connection: SAMLConnection) -> str:
@@ -57,72 +35,7 @@ def get_metadata_xml(saml_connection: SAMLConnection) -> str:
   </IDPSSODescriptor>
 </EntityDescriptor>
     """
-    print(xml_str)
     return xml_str
-
-
-@csrf_exempt
-def sso(req: WSGIRequest) -> HttpResponse:
-    return HttpResponse({"ok": True})
-
-
-@csrf_exempt
-def sso_acs(request: WSGIRequest, guid: str) -> HttpResponseRedirect:
-    """
-    This endpoint is invoked by the SSO SAML system, for example Okta, when the User
-    attempts to login via that SSO system.
-    """
-
-    try:
-
-        saml_client = get_saml_client(guid)
-        resp = request.POST.get("SAMLResponse", None)
-        if not resp:
-            errmsg = "SAML2: missing response"
-            logger.error(errmsg)
-            raise PermissionDenied(errmsg)
-
-        # Validate the SSO response and obtain the User identity information.
-        # If any part of this process fails, then redirect to a denied page.
-
-        authn_response = saml_client.parse_authn_request_response(
-            xmlstr=resp, binding=entity.BINDING_HTTP_POST
-        )
-
-        if authn_response is None:
-            errmsg = "SAML2: failed to parse response"
-            logger.error(errmsg)
-            raise PermissionDenied(errmsg)
-
-    except SAMLError as exc:
-        errmsg = f"SAML2 error: {str(exc)}"
-        logger.error(errmsg)
-        raise PermissionDenied(errmsg)
-
-    print("AUTHN RESPONSE", authn_response)
-    user_name = authn_response.name_id.text
-    backend_name = SAML2_AUTH_CONFIG["AUTHENTICATION_BACKEND"]
-    backend_obj = load_backend(backend_name)
-
-    # the call to authenticate will call the configure_user method if it
-    # exists; the backend is responsible for implementing the necessary
-    # configuration options.
-
-    request.META["SAML2_AUTH_RESPONSE"] = authn_response
-    user_obj = backend_obj.authenticate(request, user_name)
-
-    print("get_identity")
-    print(authn_response.get_identity())
-    if not user_obj:
-        errmsg = f"SAML2: no-authenticate user {user_name}"
-        logger.error(errmsg)
-        raise PermissionDenied(errmsg)
-
-    # Login user and redirect to the "next URL"
-
-    user_obj.backend = backend_name
-    login(request, user_obj)
-    return HttpResponseRedirect("https://example.com?code=abc-123")
 
 
 def get_saml_connection(guid: str) -> SAMLConnection:
@@ -149,7 +62,6 @@ def get_saml_client_config(guid: str) -> Saml2Config:
         "want_response_signed": False,
     }
 
-    # TODO verify_encrypt_cert_assertion how to?
     saml_settings = {
         "metadata": metadata,
         "service": {"sp": service_sp_data},
@@ -166,6 +78,61 @@ def get_saml_client_config(guid: str) -> Saml2Config:
 
 def get_saml_client(guid: str) -> Saml2Client:
     return Saml2Client(config=get_saml_client_config(guid))
+
+
+@csrf_exempt
+def sso_acs(request: WSGIRequest, guid: str) -> HttpResponseRedirect:
+    """
+    This endpoint is invoked by the SSO SAML system, for example Okta, when the User
+    attempts to login via that SSO system.
+    """
+
+    try:
+
+        saml_client = get_saml_client(guid)
+        resp = request.POST.get("SAMLResponse", None)
+        if not resp:
+            errmsg = "SAML2: missing response"
+            logger.error(errmsg)
+            raise PermissionDenied(errmsg)
+
+        authn_response = saml_client.parse_authn_request_response(
+            xmlstr=resp, binding=entity.BINDING_HTTP_POST
+        )
+
+        if authn_response is None:
+            errmsg = "SAML2: failed to parse response"
+            logger.error(errmsg)
+            raise PermissionDenied(errmsg)
+
+    except SAMLError as exc:
+        errmsg = f"SAML2 error: {str(exc)}"
+        logger.error(errmsg)
+        raise PermissionDenied(errmsg)
+
+    user_name = authn_response.name_id.text
+    backend_name = "django.contrib.auth.backends.RemoteUserBackend"
+    backend_obj = load_backend(backend_name)
+
+    # the call to authenticate will call the configure_user method if it
+    # exists; the backend is responsible for implementing the necessary
+    # configuration options.
+
+    request.META["SAML2_AUTH_RESPONSE"] = authn_response
+    user_obj = backend_obj.authenticate(request, user_name)
+
+    logger.info("get_identity")
+    logger.info(authn_response.get_identity())
+    if not user_obj:
+        errmsg = f"SAML2: no-authenticate user {user_name}"
+        logger.error(errmsg)
+        raise PermissionDenied(errmsg)
+
+    # Login user and redirect to the "next URL"
+
+    user_obj.backend = backend_name
+    login(request, user_obj)
+    return HttpResponseRedirect("https://example.com?code=abc-123")
 
 
 def signin(request: WSGIRequest, guid: str) -> HttpResponseRedirect:
