@@ -21,4 +21,5 @@ class SAMLConnectionAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.Organization)
+admin.site.register(models.SAMLResponse)
 admin.site.register(models.SAMLConnection, SAMLConnectionAdmin)

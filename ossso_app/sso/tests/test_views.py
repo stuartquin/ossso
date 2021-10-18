@@ -8,7 +8,7 @@ from django.test import Client
 from model_bakery import baker
 from unittest.mock import patch
 
-from sso.models import SAMLConnection
+from sso.models import SAMLConnection, SAMLResponse
 from sso.tests.data import CERT, get_saml_response
 
 
@@ -58,3 +58,8 @@ class SSOACSTest(TestCase):
             )
 
             self.assertEquals(response.status_code, 302)
+
+        saml_response = SAMLResponse.objects.get(connection=connection)
+        self.assertEquals(
+            saml_response.user_name, "joebloggs.team#EXT#@joebloggs.onmicrosoft.com"
+        )

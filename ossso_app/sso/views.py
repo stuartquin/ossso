@@ -1,18 +1,16 @@
 import logging
-from functools import lru_cache
 
 from saml2 import BINDING_HTTP_POST, BINDING_HTTP_REDIRECT, entity, SAMLError
 
 from saml2.client import Saml2Client
 from saml2.config import Config as Saml2Config
 
-from django.contrib.auth import login, load_backend
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect
 from django.core.handlers.wsgi import WSGIRequest
 from django.core.exceptions import PermissionDenied
 
-from sso.models import SAMLConnection
+from sso.models import SAMLConnection, SAMLResponse
 
 logger = logging.getLogger(__name__)
 
@@ -42,9 +40,7 @@ def get_saml_connection(guid: str) -> SAMLConnection:
     return SAMLConnection.objects.get(guid=guid)
 
 
-@lru_cache()
-def get_saml_client_config(guid: str) -> Saml2Config:
-    saml_connection = get_saml_connection(guid)
+def get_saml_client_config(saml_connection: SAMLConnection) -> Saml2Config:
     acs_url = saml_connection.acs_url
     metadata = {"inline": [get_metadata_xml(saml_connection)]}
 
@@ -76,8 +72,8 @@ def get_saml_client_config(guid: str) -> Saml2Config:
     return sp_config
 
 
-def get_saml_client(guid: str) -> Saml2Client:
-    return Saml2Client(config=get_saml_client_config(guid))
+def get_saml_client(saml_connection: SAMLConnection) -> Saml2Client:
+    return Saml2Client(config=get_saml_client_config(saml_connection))
 
 
 @csrf_exempt
@@ -86,10 +82,10 @@ def sso_acs(request: WSGIRequest, guid: str) -> HttpResponseRedirect:
     This endpoint is invoked by the SSO SAML system, for example Okta, when the User
     attempts to login via that SSO system.
     """
+    saml_connection = SAMLConnection.objects.get(guid=guid)
 
     try:
-
-        saml_client = get_saml_client(guid)
+        saml_client = get_saml_client(saml_connection)
         resp = request.POST.get("SAMLResponse", None)
         if not resp:
             errmsg = "SAML2: missing response"
@@ -110,29 +106,18 @@ def sso_acs(request: WSGIRequest, guid: str) -> HttpResponseRedirect:
         logger.error(errmsg)
         raise PermissionDenied(errmsg)
 
-    user_name = authn_response.name_id.text
-    backend_name = "django.contrib.auth.backends.RemoteUserBackend"
-    backend_obj = load_backend(backend_name)
-
-    # the call to authenticate will call the configure_user method if it
-    # exists; the backend is responsible for implementing the necessary
-    # configuration options.
-
-    request.META["SAML2_AUTH_RESPONSE"] = authn_response
-    user_obj = backend_obj.authenticate(request, user_name)
-
+    logger.info(authn_response)
     logger.info("get_identity")
     logger.info(authn_response.get_identity())
-    if not user_obj:
-        errmsg = f"SAML2: no-authenticate user {user_name}"
-        logger.error(errmsg)
-        raise PermissionDenied(errmsg)
 
-    # Login user and redirect to the "next URL"
+    saml_response = SAMLResponse.objects.create(
+        connection=saml_connection,
+        authn_response=authn_response,
+        identity=authn_response.get_identity(),
+        user_name=authn_response.name_id.text,
+    )
 
-    user_obj.backend = backend_name
-    login(request, user_obj)
-    return HttpResponseRedirect("https://example.com?code=abc-123")
+    return HttpResponseRedirect(f"https://example.com?code={saml_response.guid}")
 
 
 def signin(request: WSGIRequest, guid: str) -> HttpResponseRedirect:
@@ -142,11 +127,8 @@ def signin(request: WSGIRequest, guid: str) -> HttpResponseRedirect:
     this function the User's browswer should be redirected to the SSO system.
     """
 
-    # Next we need to obtain the SSO system URL to direct the User's browser to
-    # that system so that they can perform the login.  We use the RelayState
-    # URL parameter to pass the 'next-url' value back to the sso handler.
-
-    saml_client = get_saml_client(guid)
+    saml_connection = SAMLConnection.objects.get(guid=guid)
+    saml_client = get_saml_client(saml_connection)
     req_id, info = saml_client.prepare_for_authenticate()
 
     redirect_url = dict(info["headers"])["Location"]

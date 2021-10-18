@@ -8,7 +8,12 @@ def get_base_url() -> str:
     return settings.SSO_BASE_URL
 
 
+class Account(models.Model):
+    guid = models.UUIDField(default=uuid.uuid4, db_index=True)
+
+
 class Organization(models.Model):
+    account = models.ForeignKey(Account, on_delete=models.CASCADE, null=True)
     guid = models.UUIDField(default=uuid.uuid4, db_index=True)
     name = models.CharField(max_length=512)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -37,3 +42,13 @@ class SAMLConnection(models.Model):
 
     def __str__(self):
         return f"{self.provider} [{self.organization.id}]"
+
+
+class SAMLResponse(models.Model):
+    guid = models.UUIDField(default=uuid.uuid4, db_index=True)
+    connection = models.ForeignKey(SAMLConnection, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    retrieved_at = models.DateTimeField(blank=True, null=True)
+    authn_response = models.TextField()
+    identity = models.TextField()
+    user_name = models.TextField()
