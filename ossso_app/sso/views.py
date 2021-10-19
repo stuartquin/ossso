@@ -1,3 +1,4 @@
+import json
 import logging
 
 from saml2 import BINDING_HTTP_POST, BINDING_HTTP_REDIRECT, entity, SAMLError
@@ -113,7 +114,7 @@ def sso_acs(request: WSGIRequest, guid: str) -> HttpResponseRedirect:
     saml_response = SAMLResponse.objects.create(
         connection=saml_connection,
         authn_response=authn_response,
-        identity=authn_response.get_identity(),
+        identity=json.dumps(authn_response.get_identity()),
         user_name=authn_response.name_id.text,
     )
 

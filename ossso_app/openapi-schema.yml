@@ -1,0 +1,158 @@
+openapi: 3.0.2
+info:
+  title: ''
+  version: ''
+paths:
+  /api/response/:
+    get:
+      operationId: listSAMLResponses
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SAMLResponse'
+          description: ''
+      tags:
+      - api
+    post:
+      operationId: createSAMLResponse
+      description: ''
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SAMLResponse'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SAMLResponse'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SAMLResponse'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SAMLResponse'
+          description: ''
+      tags:
+      - api
+  /api/response/{code}/:
+    get:
+      operationId: retrieveSAMLResponse
+      description: ''
+      parameters:
+      - name: code
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SAMLResponse'
+          description: ''
+      tags:
+      - api
+    put:
+      operationId: updateSAMLResponse
+      description: ''
+      parameters:
+      - name: code
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SAMLResponse'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SAMLResponse'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SAMLResponse'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SAMLResponse'
+          description: ''
+      tags:
+      - api
+    patch:
+      operationId: partialUpdateSAMLResponse
+      description: ''
+      parameters:
+      - name: code
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SAMLResponse'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SAMLResponse'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SAMLResponse'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SAMLResponse'
+          description: ''
+      tags:
+      - api
+    delete:
+      operationId: destroySAMLResponse
+      description: ''
+      parameters:
+      - name: code
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+      - api
+components:
+  schemas:
+    SAMLResponse:
+      type: object
+      properties:
+        pk:
+          type: integer
+          readOnly: true
+        guid:
+          type: string
+          format: uuid
+        identity:
+          type: object
+          readOnly: true
+        user_name:
+          type: string
+      required:
+      - user_name

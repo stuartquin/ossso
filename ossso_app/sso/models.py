@@ -1,3 +1,4 @@
+import json
 import uuid
 from django.db import models
 from django.urls import reverse
@@ -52,3 +53,7 @@ class SAMLResponse(models.Model):
     authn_response = models.TextField()
     identity = models.TextField()
     user_name = models.TextField()
+
+    @property
+    def identity_json(self) -> dict:
+        return json.loads(self.identity)
