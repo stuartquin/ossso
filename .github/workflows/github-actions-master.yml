@@ -53,7 +53,6 @@ jobs:
       - name: Push to Dokku Dev
         if: ${{ github.ref == 'refs/heads/master' }}
         run: |
-          ssh dokku@cloud.stuartquin.com -t "dokku config:set --no-restart ossso-dev GIT_BRANCH=${GITHUB_REF}"
           git remote add dokku dokku@cloud.stuartquin.com:ossso-dev
           git push -f dokku ${GITHUB_SHA}:master
       - name: Push to Dokku Prod
