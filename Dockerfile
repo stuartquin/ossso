@@ -8,4 +8,5 @@ RUN pip install poetry
 COPY ossso_app /app/ossso_app
 
 WORKDIR /app/ossso_app
+ADD Procfile /app/ossso_app/Procfile
 RUN poetry install --no-dev
