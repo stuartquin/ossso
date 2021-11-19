@@ -160,6 +160,20 @@ python-versions = ">=3.6"
 dev = ["tox", "coverage", "lxml", "xmlschema (>=1.2.3)", "sphinx", "memory-profiler", "flake8", "mypy (==0.910)"]
 
 [[package]]
+name = "gunicorn"
+version = "20.1.0"
+description = "WSGI HTTP Server for UNIX"
+category = "main"
+optional = false
+python-versions = ">=3.5"
+
+[package.extras]
+eventlet = ["eventlet (>=0.24.1)"]
+gevent = ["gevent (>=1.4.0)"]
+setproctitle = ["setproctitle"]
+tornado = ["tornado (>=0.2)"]
+
+[[package]]
 name = "httpretty"
 version = "1.1.4"
 description = "HTTP client mock for Python"
@@ -592,7 +606,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "64d89e5a265798a492b1bf28fc91109216c5d89f15c3c1443c0beb9600560087"
+content-hash = "8fb2a4d7ed4dfaac8747389df39f688e8a5e28e3505f099f72041fe76bd60990"
 
 [metadata.files]
 appnope = [
@@ -714,6 +728,10 @@ djangorestframework = [
 elementpath = [
     {file = "elementpath-2.3.2-py3-none-any.whl", hash = "sha256:43e041bd85069713bd34f250a3c5afecf572d73579d6d492e840f78dd44a2271"},
     {file = "elementpath-2.3.2.tar.gz", hash = "sha256:392f32a5efdf15c14f3f56ef8422364f8b0a74a12f51a66d9c903c172fe3594b"},
+]
+gunicorn = [
+    {file = "gunicorn-20.1.0-py3-none-any.whl", hash = "sha256:9dcc4547dbb1cb284accfb15ab5667a0e5d1881cc443e0677b4882a4067a807e"},
+    {file = "gunicorn-20.1.0.tar.gz", hash = "sha256:e0a968b5ba15f8a328fdfd7ab1fcb5af4470c28aaf7e55df02a99bc13138e6e8"},
 ]
 httpretty = [
     {file = "httpretty-1.1.4.tar.gz", hash = "sha256:20de0e5dd5a18292d36d928cc3d6e52f8b2ac73daec40d41eb62dee154933b68"},
