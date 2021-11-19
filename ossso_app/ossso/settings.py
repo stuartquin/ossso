@@ -84,7 +84,7 @@ WSGI_APPLICATION = "ossso.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": os.environ.get("DATABASE_NAME", os.path.join(BASE_DIR, "db.sqlite3")),
     }
 }
 
@@ -147,5 +147,8 @@ LOGGING = {
     },
 }
 
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
 
 SSO_BASE_URL = os.environ.get("SSO_BASE_URL", "localhost")
