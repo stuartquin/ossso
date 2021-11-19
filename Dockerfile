@@ -8,4 +8,4 @@ RUN pip install poetry
 COPY ossso_app /app/ossso_app
 
 WORKDIR /app/ossso_app
-RUN poetry install
+RUN poetry install --no-dev
