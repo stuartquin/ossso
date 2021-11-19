@@ -49,6 +49,7 @@ jobs:
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: ${{ secrets.SSH_HOST_KEY }}
       - name: Push to Dokku Dev
         if: ${{ github.ref == 'refs/heads/master' }}
         run: |
