@@ -489,7 +489,7 @@ python-versions = "*"
 name = "pyyaml"
 version = "6.0"
 description = "YAML parser and emitter for Python"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -550,7 +550,7 @@ test = ["pytest"]
 name = "uritemplate"
 version = "4.1.1"
 description = "Implementation of RFC 6570 URI Templates"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.6"
 
@@ -606,7 +606,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "8fb2a4d7ed4dfaac8747389df39f688e8a5e28e3505f099f72041fe76bd60990"
+content-hash = "0b15128ce660a7fcd42a76169476231cd9f0136dd7f54da1e2772fca9f55ece6"
 
 [metadata.files]
 appnope = [
