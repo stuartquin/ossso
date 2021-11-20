@@ -30,6 +30,7 @@ ALLOWED_HOSTS = [
     "ossso-dev.cloud.stuartquin.com",
     "localhost",
     "ossso.local",
+    "127.0.0.1",
 ]
 
 
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "rest_framework.authtoken",
     "sso",
     "api",
 ]
@@ -150,5 +152,12 @@ LOGGING = {
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
+    ]
+}
 
 SSO_BASE_URL = os.environ.get("SSO_BASE_URL", "localhost")

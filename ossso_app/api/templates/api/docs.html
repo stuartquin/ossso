@@ -18,7 +18,13 @@
     </style>
   </head>
   <body>
-    <redoc spec-url='/api/openapi'></redoc>
+    <div id="redoc"></div>
     <script src="https://cdn.jsdelivr.net/npm/redoc@latest/bundles/redoc.standalone.js"> </script>
+    <script>
+var True = true;
+window.OPENAPI_SCHEMA = {{schema|safe}};
+Redoc.init(window.OPENAPI_SCHEMA, {hideHostname:true}, document.getElementById("redoc"));
+
+    </script>
   </body>
 </html>

@@ -3,7 +3,7 @@ from django.http.response import HttpResponse
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework import permissions
-from rest_framework.schemas.openapi import AutoSchema
+from rest_framework.schemas.openapi import AutoSchema, SchemaGenerator
 
 from sso.models import SAMLResponse, SAMLConnection
 from api.serializers import SAMLConnectionSerializer, SAMLResponseSerializer
@@ -27,4 +27,7 @@ class SAMLConnectionViewSet(viewsets.ModelViewSet):
 
 
 def docs(request: WSGIRequest) -> HttpResponse:
-    return render(request, "api/docs.html")
+    generator = SchemaGenerator(
+        title="OSSSO API Docs",
+    )
+    return render(request, "api/docs.html", {"schema": generator.get_schema()})

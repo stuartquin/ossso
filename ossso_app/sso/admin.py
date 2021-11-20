@@ -20,6 +20,21 @@ class SAMLConnectionAdmin(admin.ModelAdmin):
     readonly_fields = ("sso_url_link", "acs_url_link")
 
 
-admin.site.register(models.Organization)
+class RedirectURIInline(admin.TabularInline):
+    extra = 1
+    model = models.RedirectURI
+    readonly_fields = [
+        "guid",
+    ]
+
+
+class OrganizationAdmin(admin.ModelAdmin):
+    inlines = [
+        RedirectURIInline,
+    ]
+
+
+admin.site.register(models.Account)
+admin.site.register(models.Organization, OrganizationAdmin)
 admin.site.register(models.SAMLResponse)
 admin.site.register(models.SAMLConnection, SAMLConnectionAdmin)

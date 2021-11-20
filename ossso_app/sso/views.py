@@ -1,5 +1,6 @@
 import json
 import logging
+from rest_framework.generics import get_object_or_404
 
 from saml2 import BINDING_HTTP_POST, BINDING_HTTP_REDIRECT, entity, SAMLError
 
@@ -11,7 +12,7 @@ from django.http import HttpResponseRedirect
 from django.core.handlers.wsgi import WSGIRequest
 from django.core.exceptions import PermissionDenied
 
-from sso.models import SAMLConnection, SAMLResponse
+from sso.models import RedirectURI, SAMLConnection, SAMLResponse
 
 logger = logging.getLogger(__name__)
 
@@ -84,6 +85,9 @@ def sso_acs(request: WSGIRequest, guid: str) -> HttpResponseRedirect:
     attempts to login via that SSO system.
     """
     saml_connection = SAMLConnection.objects.get(guid=guid)
+    redirect_uri = get_object_or_404(
+        RedirectURI, organization=saml_connection.organization
+    )
 
     try:
         saml_client = get_saml_client(saml_connection)
@@ -118,7 +122,7 @@ def sso_acs(request: WSGIRequest, guid: str) -> HttpResponseRedirect:
         user_name=authn_response.name_id.text,
     )
 
-    return HttpResponseRedirect(f"https://example.com?code={saml_response.guid}")
+    return HttpResponseRedirect(f"{redirect_uri.uri}?code={saml_response.guid}")
 
 
 def signin(request: WSGIRequest, guid: str) -> HttpResponseRedirect:

@@ -23,6 +23,15 @@ class Organization(models.Model):
         return self.name
 
 
+class RedirectURI(models.Model):
+    guid = models.UUIDField(default=uuid.uuid4, db_index=True)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, null=True)
+    uri = models.CharField(max_length=2048)
+
+    def __str__(self):
+        return self.uri
+
+
 class SAMLConnection(models.Model):
     guid = models.UUIDField(default=uuid.uuid4, db_index=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
