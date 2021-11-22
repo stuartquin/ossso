@@ -45,6 +45,7 @@ class SAMLConnectionURLView(generics.RetrieveAPIView):
         domain = request.GET.get("domain", "")
         # TODO filter by auth
         sso_domain: Domain = get_object_or_404(Domain, domain=domain.strip())
+
         return Response({"redirect_url": sso_domain.connection.sso_url})
 
 
