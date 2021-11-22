@@ -5,8 +5,8 @@ from api import views
 
 
 router = SimpleRouter()
-router.register(r"v1/response", views.SAMLResponseViewSet, basename="sso")
-router.register(r"v1/connection", views.SAMLConnectionViewSet, basename="sso")
+router.register(r"v1/response", views.SAMLResponseViewSet, basename="api")
+router.register(r"v1/connection", views.SAMLConnectionViewSet, basename="api")
 
 
 urlpatterns = [
@@ -22,4 +22,9 @@ urlpatterns = [
         name="openapi-schema",
     ),
     path("docs", views.docs, name="api-docs"),
+    path(
+        "v1/connection/url",
+        views.SAMLConnectionURLView.as_view(),
+        name="api-connection-url",
+    ),
 ] + router.urls

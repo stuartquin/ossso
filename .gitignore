@@ -144,3 +144,5 @@ cython_debug/
 
 ossso_app/pyrightconfig.json
 env_variables
+
+ossso_web/ossso/node_modules

@@ -25,3 +25,9 @@ class SAMLConnectionSerializer(serializers.ModelSerializer):
             "cert",
             "created_at",
         ]
+
+
+class SAMLConnectionURLSerializer(serializers.Serializer):
+    redirect_url = serializers.CharField(
+        read_only=True, help_text="URL to redirect to Identity Provider sign-in page"
+    )

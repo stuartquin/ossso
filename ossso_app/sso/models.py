@@ -54,6 +54,13 @@ class SAMLConnection(models.Model):
         return f"{self.provider} [{self.organization.id}]"
 
 
+class Domain(models.Model):
+    guid = models.UUIDField(default=uuid.uuid4, db_index=True)
+    domain = models.CharField(max_length=2048, db_index=True)
+    connection = models.ForeignKey(SAMLConnection, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
 class SAMLResponse(models.Model):
     guid = models.UUIDField(default=uuid.uuid4, db_index=True)
     connection = models.ForeignKey(SAMLConnection, on_delete=models.CASCADE)
