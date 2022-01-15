@@ -15,3 +15,4 @@ dokku config:set $APP DATABASE_NAME=/storage/db.sqlite3
 dokku config:set $APP DJANGO_SECRET_KEY=$3
 dokku storage:mount $APP $STORAGE:/storage
 dokku storage:mount $APP $STORAGE/static:/app/ossso_app/static
+dokku storage:mount $APP $STORAGE/build:/app/ossso_web/build
