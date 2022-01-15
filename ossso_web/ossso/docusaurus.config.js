@@ -7,7 +7,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Open Source SSO',
-  tagline: 'Simple SAML app',
+  tagline: 'Simple SAML Authentication',
   url: 'https://ossso-dev.cloud.stuartquin.com/',
   baseUrl: '/',
   onBrokenLinks: 'throw',
@@ -55,7 +55,6 @@ const config = {
             position: 'left',
             label: 'Tutorial',
           },
-          {to: '/blog', label: 'Blog', position: 'left'},
           {
             href: 'https://github.com/stuartquin/ossso/',
             label: 'GitHub',
@@ -96,12 +95,8 @@ const config = {
             title: 'More',
             items: [
               {
-                label: 'Blog',
-                to: '/blog',
-              },
-              {
                 label: 'GitHub',
-                href: 'https://github.com/facebook/docusaurus',
+                href: 'https://github.com/stuartquin/ossso/',
               },
             ],
           },
