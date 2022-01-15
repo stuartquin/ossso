@@ -3,7 +3,28 @@ info:
   title: ''
   version: ''
 paths:
-  /api/response/:
+  /api/v1/connection/redirect:
+    get:
+      operationId: listSAMLConnectionRedirects
+      description: ''
+      parameters:
+      - name: domain
+        required: false
+        in: query
+        description: domain
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {}
+          description: ''
+      tags:
+      - connection
+  /api/v1/response/:
     get:
       operationId: listSAMLResponses
       description: ''
@@ -18,7 +39,7 @@ paths:
                   $ref: '#/components/schemas/SAMLResponse'
           description: ''
       tags:
-      - api
+      - response
     post:
       operationId: createSAMLResponse
       description: ''
@@ -42,8 +63,8 @@ paths:
                 $ref: '#/components/schemas/SAMLResponse'
           description: ''
       tags:
-      - api
-  /api/response/{code}/:
+      - response
+  /api/v1/response/{code}/:
     get:
       operationId: retrieveSAMLResponse
       description: ''
@@ -62,7 +83,7 @@ paths:
                 $ref: '#/components/schemas/SAMLResponse'
           description: ''
       tags:
-      - api
+      - response
     put:
       operationId: updateSAMLResponse
       description: ''
@@ -92,7 +113,7 @@ paths:
                 $ref: '#/components/schemas/SAMLResponse'
           description: ''
       tags:
-      - api
+      - response
     patch:
       operationId: partialUpdateSAMLResponse
       description: ''
@@ -122,7 +143,7 @@ paths:
                 $ref: '#/components/schemas/SAMLResponse'
           description: ''
       tags:
-      - api
+      - response
     delete:
       operationId: destroySAMLResponse
       description: ''
@@ -137,15 +158,147 @@ paths:
         '204':
           description: ''
       tags:
-      - api
+      - response
+  /api/v1/connection/:
+    get:
+      operationId: listSAMLConnections
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SAMLConnection'
+          description: ''
+      tags:
+      - connection
+    post:
+      operationId: createSAMLConnection
+      description: ''
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SAMLConnection'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SAMLConnection'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SAMLConnection'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SAMLConnection'
+          description: ''
+      tags:
+      - connection
+  /api/v1/connection/{guid}/:
+    get:
+      operationId: retrieveSAMLConnection
+      description: ''
+      parameters:
+      - name: guid
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SAMLConnection'
+          description: ''
+      tags:
+      - connection
+    put:
+      operationId: updateSAMLConnection
+      description: ''
+      parameters:
+      - name: guid
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SAMLConnection'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SAMLConnection'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SAMLConnection'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SAMLConnection'
+          description: ''
+      tags:
+      - connection
+    patch:
+      operationId: partialUpdateSAMLConnection
+      description: ''
+      parameters:
+      - name: guid
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SAMLConnection'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SAMLConnection'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SAMLConnection'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SAMLConnection'
+          description: ''
+      tags:
+      - connection
+    delete:
+      operationId: destroySAMLConnection
+      description: ''
+      parameters:
+      - name: guid
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+      - connection
 components:
   schemas:
     SAMLResponse:
       type: object
       properties:
-        pk:
-          type: integer
-          readOnly: true
         guid:
           type: string
           format: uuid
@@ -154,5 +307,41 @@ components:
           readOnly: true
         user_name:
           type: string
+        connection:
+          type: integer
       required:
       - user_name
+      - connection
+    SAMLConnection:
+      type: object
+      properties:
+        guid:
+          type: string
+          format: uuid
+        organization:
+          type: integer
+        provider:
+          type: string
+          maxLength: 2048
+        idp_entity_id:
+          type: string
+          maxLength: 2048
+        sp_entity_id:
+          type: string
+          maxLength: 2048
+        signon_url:
+          type: string
+          maxLength: 2048
+        cert:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - organization
+      - provider
+      - idp_entity_id
+      - sp_entity_id
+      - signon_url

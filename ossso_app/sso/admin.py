@@ -4,7 +4,17 @@ from django.utils.html import format_html
 from sso import models
 
 
+class DomainInline(admin.TabularInline):
+    extra = 1
+    model = models.Domain
+    readonly_fields = [
+        "guid",
+    ]
+
+
 class SAMLConnectionAdmin(admin.ModelAdmin):
+    inlines = [DomainInline]
+
     def sso_url_link(self, instance):
         url = instance.sso_url
         return format_html('<a href="{}">{}</a>', url, url)

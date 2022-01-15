@@ -1,12 +1,19 @@
+from rest_framework.request import Request
+from rest_framework.response import Response
 from django.core.handlers.wsgi import WSGIRequest
 from django.http.response import HttpResponse
-from django.shortcuts import render
-from rest_framework import viewsets
-from rest_framework import permissions
+from django.shortcuts import get_object_or_404, render
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import viewsets, permissions, views, generics
 from rest_framework.schemas.openapi import AutoSchema, SchemaGenerator
 
-from sso.models import SAMLResponse, SAMLConnection
-from api.serializers import SAMLConnectionSerializer, SAMLResponseSerializer
+from api.filters import SAMLConnectionURLFilter
+from api.serializers import (
+    SAMLConnectionURLSerializer,
+    SAMLConnectionSerializer,
+    SAMLResponseSerializer,
+)
+from sso.models import SAMLResponse, SAMLConnection, Domain
 
 
 class SAMLResponseViewSet(viewsets.ModelViewSet):
@@ -24,6 +31,22 @@ class SAMLConnectionViewSet(viewsets.ModelViewSet):
     serializer_class = SAMLConnectionSerializer
     permission_classes = [permissions.IsAuthenticated]
     lookup_field = "guid"
+
+
+class SAMLConnectionURLView(generics.RetrieveAPIView):
+    schema = AutoSchema(tags=["connection"])
+    permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = SAMLConnectionURLFilter
+    serializer_class = SAMLConnectionURLSerializer
+    action = "retrieve"
+
+    def retrieve(self, request: Request) -> Response:
+        domain = request.GET.get("domain", "")
+        # TODO filter by auth
+        sso_domain: Domain = get_object_or_404(Domain, domain=domain.strip())
+
+        return Response({"redirect_url": sso_domain.connection.sso_url})
 
 
 def docs(request: WSGIRequest) -> HttpResponse:
