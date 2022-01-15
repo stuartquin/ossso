@@ -85,7 +85,7 @@ def callback():
     response = urllib.request.urlopen(request)
     saml_response_data = json.loads(response.read().decode("utf-8"))
 
-    # Handle login etc.
+    # {"FirstName": ["Joe"], "LastName": ["Blogs"], "Email": ["joe@bloggs.com"]}
 ```
 
   </TabItem>
