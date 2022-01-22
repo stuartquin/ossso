@@ -8,7 +8,7 @@ from django.test import Client
 from model_bakery import baker
 from unittest.mock import patch
 
-from sso.models import RedirectURI, SAMLConnection, SAMLResponse
+from sso.models import SAMLConnection, SAMLResponse
 from sso.tests.data import CERT, get_saml_response
 
 
@@ -50,10 +50,6 @@ class SSOACSTest(TestCase):
             cert=CERT,
         )
 
-        redirect_uri: RedirectURI = baker.make(
-            "RedirectURI", organization=connection.organization
-        )
-
         client = Client()
         with patch("saml2.sigver.SecurityContext.check_signature"):
             response = client.post(
@@ -62,7 +58,7 @@ class SSOACSTest(TestCase):
             )
 
             self.assertEquals(response.status_code, 302)
-            self.assertIn(redirect_uri.uri, response.url)
+            self.assertIn(connection.organization.redirect_uri, response.url)
 
         saml_response = SAMLResponse.objects.get(connection=connection)
         self.assertEquals(

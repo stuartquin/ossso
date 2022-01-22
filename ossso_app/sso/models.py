@@ -3,6 +3,7 @@ import uuid
 from django.db import models
 from django.urls import reverse
 from django.conf import settings
+from django.contrib.auth.models import User
 
 
 def get_base_url() -> str:
@@ -13,23 +14,24 @@ class Account(models.Model):
     guid = models.UUIDField(default=uuid.uuid4, db_index=True)
 
 
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    account = models.ForeignKey(Account, on_delete=models.CASCADE, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user.name
+
+
 class Organization(models.Model):
     account = models.ForeignKey(Account, on_delete=models.CASCADE, null=True)
     guid = models.UUIDField(default=uuid.uuid4, db_index=True)
     name = models.CharField(max_length=512)
     created_at = models.DateTimeField(auto_now_add=True)
+    redirect_uri = models.CharField(max_length=2048)
 
     def __str__(self):
         return self.name
-
-
-class RedirectURI(models.Model):
-    guid = models.UUIDField(default=uuid.uuid4, db_index=True)
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, null=True)
-    uri = models.CharField(max_length=2048)
-
-    def __str__(self):
-        return self.uri
 
 
 class SAMLConnection(models.Model):
