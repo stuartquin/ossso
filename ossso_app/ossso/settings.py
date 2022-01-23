@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "sso",
     "api",
+    "web",
 ]
 
 MIDDLEWARE = [
@@ -161,5 +162,7 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
 }
+
+LOGIN_REDIRECT_URL = "/"
 
 SSO_BASE_URL = os.environ.get("SSO_BASE_URL", "localhost")

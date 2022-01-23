@@ -13,6 +13,9 @@ def get_base_url() -> str:
 class Account(models.Model):
     guid = models.UUIDField(default=uuid.uuid4, db_index=True)
 
+    def __str__(self):
+        return str(self.guid)
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -20,7 +23,7 @@ class UserProfile(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.user.name
+        return self.user.email
 
 
 class Organization(models.Model):

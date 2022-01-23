@@ -35,6 +35,7 @@ class OrganizationAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.Account)
+admin.site.register(models.UserProfile)
 admin.site.register(models.Organization, OrganizationAdmin)
 admin.site.register(models.SAMLResponse)
 admin.site.register(models.SAMLConnection, SAMLConnectionAdmin)

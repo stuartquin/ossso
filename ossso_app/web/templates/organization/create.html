@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load rest_framework %}
+
+
+{% block content %}
+<div class="md:grid md:grid-cols-3 md:gap-6">
+  <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
+    <form method="post" action="{% url "web_organization" %}">
+      {% render_form serializer template_pack='forms' %}
+    </form>
+  </div>
+</div>
+{% endblock %}
