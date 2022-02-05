@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="py-3 text-right">
-  <a href="{% url "web_connection_detail" organization_guid=organization_guid guid="new"%}" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+  <a href="{% url "web_connection_detail" organization_guid=organization_guid guid="new"%}" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
     Add Connection
   </a>
 </div>
@@ -26,7 +26,7 @@
           <div class="text-sm text-gray-500">{{connection.provider}}</div>
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-          <a href="{% url "web_connection_detail" organization_guid=organization_guid guid=connection.guid %}" class="text-green-600 hover:text-green-900">
+          <a href="{% url "web_connection_detail" organization_guid=organization_guid guid=connection.guid %}" class="text-teal-600 hover:text-teal-900">
             Edit
           </a>
         </td>

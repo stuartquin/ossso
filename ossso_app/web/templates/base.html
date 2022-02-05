@@ -6,15 +6,23 @@
 </head>
 <body>
 
-  <nav class="bg-gray-800">
+  <nav class="">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <a href="#" class="text-white px-3 py-2  text-sm font-medium">
-        {% if user.is_authenticated %}
-        Welcome, {{ user.username }}
-        {% else %}
-        Not logged in
-        {% endif %}
-      </a>
+      <div class="flex items-center justify-between h-16">
+        <div class="hidden md:block">
+          <div class="flex items-baseline space-x-4">
+            <a href="{% url "web_organization" %}" class="text-gray-500 px-3 py-2 rounded-md text-sm font-medium" aria-current="page">Organizations</a>
+
+          </div>
+        </div>
+        <a href="#" class="text-gray-500 px-3 py-2  text-sm font-medium">
+          {% if user.is_authenticated %}
+          Welcome, {{ user.username }}
+          {% else %}
+          Not logged in
+          {% endif %}
+        </a>
+      </div>
     </div>
   </nav>
 

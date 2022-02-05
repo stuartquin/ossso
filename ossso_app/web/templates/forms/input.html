@@ -1,4 +1,4 @@
-<div class="col-span-3 sm:col-span-2">
+<div class="col-span-3 sm:col-span-2 my-2">
   {% if field.label %}
   <label for="id_name" class="block text-sm font-medium text-gray-700">
     {{ field.label }}
@@ -7,12 +7,26 @@
   <div class="mt-1 flex rounded-md shadow-sm">
     <input
       name="{{ field.name }}"
-      class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+      class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500 focus:z-10 sm:text-sm"
       {% if style.input_type != "file" %}class="form-control"{% endif %}
       type="{{ style.input_type }}"
       {% if style.placeholder %}placeholder="{{ style.placeholder }}"{% endif %}
       {% if field.value is not None %}value="{{ field.value }}"{% endif %}
       {% if style.autofocus and style.input_type != "hidden" %}autofocus{% endif %}
     />
+  </div>
+
+  {% if field.errors %}
+  <div>
+    {% for error in field.errors %}
+      <span class="text-red-700">{{ error }}</span>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div>
+    {% if field.help_text %}
+      <span class="help-block">{{ field.help_text|safe }}</span>
+    {% endif %}
   </div>
 </div>

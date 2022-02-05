@@ -36,6 +36,7 @@ class SAMLConnectionSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(read_only=True)
     organization = OrganizationSerializer(read_only=True)
     guid = serializers.CharField(read_only=True)
+    cert = serializers.CharField(style={"base_template": "textarea.html", "rows": 10})
 
     class Meta:
         model = SAMLConnection

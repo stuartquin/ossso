@@ -11,18 +11,18 @@ def get_organizations_for_user_profile(
     return user_profile.account.organization_set.all()
 
 
-def create_organization(user: User, data: dict) -> Organization:
+def create_organization(user: User, data: dict) -> OrganizationSerializer:
     serializer = OrganizationSerializer(data=data)
-    serializer.is_valid(raise_exception=True)
-    serializer.save(account=user.userprofile.account)
-    return serializer.instance
+    if serializer.is_valid():
+        serializer.save(account=user.userprofile.account)
+    return serializer
 
 
-def update_organization(user: User, guid: str, data: dict) -> Organization:
+def update_organization(user: User, guid: str, data: dict) -> OrganizationSerializer:
     account = user.userprofile.account
     organization = get_object_or_404(account.organization_set, guid=guid)
 
     serializer = OrganizationSerializer(organization, data=data)
-    serializer.is_valid(raise_exception=True)
-    serializer.save()
-    return serializer.instance
+    if serializer.is_valid():
+        serializer.save()
+    return serializer

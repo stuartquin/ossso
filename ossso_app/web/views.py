@@ -1,3 +1,4 @@
+from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from sso.models import Organization, SAMLConnection
 from rest_framework.authentication import SessionAuthentication
@@ -54,9 +55,12 @@ class OrganizationDetail(APIView):
 
     def post(self, request, guid):
         if guid == "new":
-            create_organization(request.user, request.data)
+            serializer = create_organization(request.user, request.data)
         else:
-            update_organization(request.user, guid, request.data)
+            serializer = update_organization(request.user, guid, request.data)
+
+        if not serializer.is_valid():
+            return Response({"serializer": serializer, "guid": guid})
 
         return redirect("web_organization")
 
@@ -89,13 +93,23 @@ class SAMLConnectionDetail(APIView):
         organization = get_object_or_404(
             user_profile.account.organization_set, guid=organization_guid
         )
+
         if guid == "new":
-            saml_connection = create_saml_connection(organization, request.data)
+            serializer = create_saml_connection(organization, request.data)
         else:
-            saml_connection = update_saml_connection(organization, guid, request.data)
+            serializer = update_saml_connection(organization, guid, request.data)
+
+        if not serializer.is_valid():
+            return Response(
+                {
+                    "serializer": serializer,
+                    "guid": guid,
+                    "organization_guid": organization.guid,
+                }
+            )
 
         return redirect(
             "web_connection_detail",
             organization_guid=organization.guid,
-            guid=saml_connection.guid,
+            guid=serializer.instance.guid,
         )
