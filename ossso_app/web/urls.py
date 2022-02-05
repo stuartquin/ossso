@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from web import views
 
 urlpatterns = [
@@ -23,4 +23,6 @@ urlpatterns = [
         views.DomainDetail.as_view(),
         name="web_domain_detail",
     ),
+    path("accounts/register", views.Register.as_view(), name="web_register"),
+    path("accounts/", include("django.contrib.auth.urls")),
 ]

@@ -1,7 +1,10 @@
+from django.contrib.auth import login
+from web.accounts import create_user_profile
+from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth.forms import UserCreationForm
 from web.domains import create_domain, update_domain
-from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
-from sso.models import Organization, SAMLConnection
+from sso.models import Account, Organization, SAMLConnection
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 from api.serializers import (
@@ -31,6 +34,25 @@ def index(request: HttpRequest):
     return render(request, "index.html")
 
 
+class Register(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = "registration/register.html"
+
+    def get(self, request: HttpRequest):
+        form = UserCreationForm()
+        return Response({"form": form})
+
+    def post(self, request):
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            create_user_profile(user, Account.objects.create())
+            login(request, user)
+            return redirect("web_organization")
+
+        return Response({"form": form})
+
+
 class OrganizationList(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = "organization/list.html"
@@ -48,6 +70,7 @@ class OrganizationList(APIView):
 class OrganizationDetail(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
     template_name = "organization/detail.html"
 
     def get(self, request, guid):
@@ -73,6 +96,7 @@ class OrganizationDetail(APIView):
 class SAMLConnectionDetail(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
     template_name = "saml_connection/detail.html"
 
     def get(self, request, organization_guid, guid):
@@ -123,6 +147,7 @@ class SAMLConnectionDetail(APIView):
 class DomainDetail(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
     template_name = "domain/detail.html"
 
     def get(self, request, connection_guid, guid):
