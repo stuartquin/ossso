@@ -1,9 +1,14 @@
+from web.domains import create_domain, update_domain
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 from sso.models import Organization, SAMLConnection
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
-from api.serializers import OrganizationSerializer, SAMLConnectionSerializer
+from api.serializers import (
+    DomainSerializer,
+    OrganizationSerializer,
+    SAMLConnectionSerializer,
+)
 from django.http.request import HttpRequest
 from django.shortcuts import redirect, render
 
@@ -111,5 +116,61 @@ class SAMLConnectionDetail(APIView):
         return redirect(
             "web_connection_detail",
             organization_guid=organization.guid,
+            guid=serializer.instance.guid,
+        )
+
+
+class DomainDetail(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    authentication_classes = [SessionAuthentication]
+    template_name = "domain/detail.html"
+
+    def get(self, request, connection_guid, guid):
+        user_profile = request.user.userprofile
+        connection = get_object_or_404(
+            SAMLConnection.objects.filter(
+                organization__in=user_profile.account.organization_set.all()
+            ),
+            guid=connection_guid,
+        )
+        if guid == "new":
+            serializer = DomainSerializer()
+        else:
+            domain = get_object_or_404(connection.domain_set, guid=guid)
+            serializer = DomainSerializer(domain)
+        return Response(
+            {
+                "serializer": serializer,
+                "guid": guid,
+                "connection_guid": connection.guid,
+            }
+        )
+
+    def post(self, request, connection_guid, guid):
+        user_profile = request.user.userprofile
+        connection = get_object_or_404(
+            SAMLConnection.objects.filter(
+                organization__in=user_profile.account.organization_set.all()
+            ),
+            guid=connection_guid,
+        )
+
+        if guid == "new":
+            serializer = create_domain(connection, request.data)
+        else:
+            serializer = update_domain(connection, guid, request.data)
+
+        if not serializer.is_valid():
+            return Response(
+                {
+                    "serializer": serializer,
+                    "guid": guid,
+                    "connection_guid": connection.guid,
+                }
+            )
+
+        return redirect(
+            "web_domain_detail",
+            connection_guid=connection.guid,
             guid=serializer.instance.guid,
         )

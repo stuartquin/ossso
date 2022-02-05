@@ -18,4 +18,9 @@ urlpatterns = [
         views.SAMLConnectionDetail.as_view(),
         name="web_connection_detail",
     ),
+    path(
+        "connection/<str:connection_guid>/domain/<str:guid>",
+        views.DomainDetail.as_view(),
+        name="web_domain_detail",
+    ),
 ]

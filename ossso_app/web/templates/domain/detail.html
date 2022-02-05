@@ -4,7 +4,7 @@
 {% block content %}
 <div class="md:grid md:grid-cols-3 md:gap-6">
   <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
-    <form method="post" action="{% url "web_connection_detail" organization_guid=organization_guid guid=guid %}">
+    <form method="post" action="{% url "web_domain_detail" connection_guid=connection_guid guid=guid %}">
       {% csrf_token %}
       {% render_form serializer template_pack='forms' %}
       <div class="mt-1">
@@ -13,10 +13,5 @@
     </form>
   </div>
 </div>
-
-{% if serializer.instance %}
-  {% include "saml_connection/domain_list.html" with connection_guid=serializer.instance.guid domains=serializer.instance.domain_set.all %}
-{% endif %}
-
 
 {% endblock %}

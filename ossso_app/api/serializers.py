@@ -1,4 +1,4 @@
-from sso.models import Account, Organization, SAMLConnection, SAMLResponse
+from sso.models import Account, Domain, Organization, SAMLConnection, SAMLResponse
 from rest_framework import serializers
 
 
@@ -48,5 +48,21 @@ class SAMLConnectionSerializer(serializers.ModelSerializer):
             "sp_entity_id",
             "signon_url",
             "cert",
+            "created_at",
+        ]
+
+
+class DomainSerializer(serializers.ModelSerializer):
+    created_at = serializers.DateTimeField(read_only=True)
+    connection = SAMLConnectionSerializer(read_only=True)
+    guid = serializers.CharField(read_only=True)
+    domain = serializers.CharField()
+
+    class Meta:
+        model = Domain
+        fields = [
+            "guid",
+            "connection",
+            "domain",
             "created_at",
         ]
