@@ -10,23 +10,6 @@ class SAMLResponseSerializer(serializers.ModelSerializer):
         fields = ["guid", "identity", "user_name", "connection"]
 
 
-class SAMLConnectionSerializer(serializers.ModelSerializer):
-    created_at = serializers.DateTimeField(read_only=True)
-
-    class Meta:
-        model = SAMLConnection
-        fields = [
-            "guid",
-            "organization",
-            "provider",
-            "idp_entity_id",
-            "sp_entity_id",
-            "signon_url",
-            "cert",
-            "created_at",
-        ]
-
-
 class SAMLConnectionURLSerializer(serializers.Serializer):
     redirect_url = serializers.CharField(
         read_only=True, help_text="URL to redirect to Identity Provider sign-in page"
@@ -47,3 +30,22 @@ class OrganizationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organization
         fields = ["guid", "name", "created_at", "redirect_uri", "account"]
+
+
+class SAMLConnectionSerializer(serializers.ModelSerializer):
+    created_at = serializers.DateTimeField(read_only=True)
+    organization = OrganizationSerializer(read_only=True)
+    guid = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = SAMLConnection
+        fields = [
+            "guid",
+            "organization",
+            "provider",
+            "idp_entity_id",
+            "sp_entity_id",
+            "signon_url",
+            "cert",
+            "created_at",
+        ]

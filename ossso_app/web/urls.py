@@ -13,4 +13,9 @@ urlpatterns = [
         views.OrganizationList.as_view(),
         name="web_organization",
     ),
+    path(
+        "organization/<str:organization_guid>/connection/<str:guid>",
+        views.SAMLConnectionDetail.as_view(),
+        name="web_connection_detail",
+    ),
 ]

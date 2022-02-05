@@ -1,8 +1,8 @@
 from rest_framework.generics import get_object_or_404
-from sso.models import Organization
+from sso.models import Organization, SAMLConnection
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
-from api.serializers import OrganizationSerializer
+from api.serializers import OrganizationSerializer, SAMLConnectionSerializer
 from django.http.request import HttpRequest
 from django.shortcuts import redirect, render
 
@@ -13,6 +13,10 @@ from web.organizations import (
     get_organizations_for_user_profile,
     create_organization,
     update_organization,
+)
+from web.saml_connections import (
+    create_saml_connection,
+    update_saml_connection,
 )
 
 
@@ -55,3 +59,43 @@ class OrganizationDetail(APIView):
             update_organization(request.user, guid, request.data)
 
         return redirect("web_organization")
+
+
+class SAMLConnectionDetail(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    authentication_classes = [SessionAuthentication]
+    template_name = "saml_connection/detail.html"
+
+    def get(self, request, organization_guid, guid):
+        user_profile = request.user.userprofile
+        organization = get_object_or_404(
+            user_profile.account.organization_set, guid=organization_guid
+        )
+        if guid == "new":
+            serializer = SAMLConnectionSerializer()
+        else:
+            connection = get_object_or_404(organization.samlconnection_set, guid=guid)
+            serializer = SAMLConnectionSerializer(connection)
+        return Response(
+            {
+                "serializer": serializer,
+                "guid": guid,
+                "organization_guid": organization.guid,
+            }
+        )
+
+    def post(self, request, organization_guid, guid):
+        user_profile = request.user.userprofile
+        organization = get_object_or_404(
+            user_profile.account.organization_set, guid=organization_guid
+        )
+        if guid == "new":
+            saml_connection = create_saml_connection(organization, request.data)
+        else:
+            saml_connection = update_saml_connection(organization, guid, request.data)
+
+        return redirect(
+            "web_connection_detail",
+            organization_guid=organization.guid,
+            guid=saml_connection.guid,
+        )
