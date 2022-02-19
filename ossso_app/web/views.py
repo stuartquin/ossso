@@ -67,19 +67,20 @@ class OrganizationList(APIView):
         )
 
 
-class OrganizationDetail(APIView):
+class OrganizationEdit(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
-    template_name = "organization/detail.html"
+    template_name = "organization/edit.html"
 
     def get(self, request, guid):
-        if guid == "new":
+        is_new = guid == "new"
+        if is_new:
             serializer = OrganizationSerializer()
         else:
             organization = get_object_or_404(Organization, guid=guid)
             serializer = OrganizationSerializer(organization)
-        return Response({"serializer": serializer, "guid": guid})
+        return Response({"serializer": serializer, "guid": guid, "is_new": is_new})
 
     def post(self, request, guid):
         if guid == "new":
@@ -93,11 +94,29 @@ class OrganizationDetail(APIView):
         return redirect("web_organization")
 
 
-class SAMLConnectionDetail(APIView):
+class OrganizationDetail(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
-    template_name = "saml_connection/detail.html"
+    template_name = "organization/detail.html"
+
+    def get(self, request, guid):
+        organization = get_object_or_404(Organization, guid=guid)
+        serializer = OrganizationSerializer(organization)
+        return Response(
+            {
+                "serializer": serializer,
+                "guid": guid,
+                "organization": organization,
+            }
+        )
+
+
+class SAMLConnectionEdit(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    template_name = "saml_connection/edit.html"
 
     def get(self, request, organization_guid, guid):
         user_profile = request.user.userprofile
@@ -144,11 +163,33 @@ class SAMLConnectionDetail(APIView):
         )
 
 
-class DomainDetail(APIView):
+class SAMLConnectionDetail(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
-    template_name = "domain/detail.html"
+    template_name = "saml_connection/detail.html"
+
+    def get(self, request, organization_guid, guid):
+        user_profile = request.user.userprofile
+        organization = get_object_or_404(
+            user_profile.account.organization_set, guid=organization_guid
+        )
+        connection = get_object_or_404(organization.samlconnection_set, guid=guid)
+        serializer = SAMLConnectionSerializer(connection)
+        return Response(
+            {
+                "serializer": serializer,
+                "guid": guid,
+                "organization_guid": organization.guid,
+            }
+        )
+
+
+class DomainEdit(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+    template_name = "domain/edit.html"
 
     def get(self, request, connection_guid, guid):
         user_profile = request.user.userprofile
@@ -163,11 +204,13 @@ class DomainDetail(APIView):
         else:
             domain = get_object_or_404(connection.domain_set, guid=guid)
             serializer = DomainSerializer(domain)
+
         return Response(
             {
                 "serializer": serializer,
                 "guid": guid,
-                "connection_guid": connection.guid,
+                "organization": connection.organization,
+                "connection": connection,
             }
         )
 
@@ -195,7 +238,7 @@ class DomainDetail(APIView):
             )
 
         return redirect(
-            "web_domain_detail",
-            connection_guid=connection.guid,
-            guid=serializer.instance.guid,
+            "web_connection_detail",
+            organization_guid=connection.organization.guid,
+            guid=connection.guid,
         )

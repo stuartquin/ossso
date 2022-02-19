@@ -8,7 +8,9 @@ from django.db.models.query import QuerySet
 def get_organizations_for_user_profile(
     user_profile: UserProfile,
 ) -> "QuerySet[Organization]":
-    return user_profile.account.organization_set.all()
+    return user_profile.account.organization_set.prefetch_related(
+        "samlconnection_set"
+    ).all()
 
 
 def create_organization(user: User, data: dict) -> OrganizationSerializer:

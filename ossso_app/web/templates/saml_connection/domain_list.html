@@ -1,36 +1,42 @@
 {% load rest_framework %}
 
-<div class="py-3 text-right">
-  <a href="{% url "web_domain_detail" connection_guid=connection_guid guid="new"%}" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
-    Add Domain
-  </a>
-</div>
+<div class="hidden sm:block">
+  <div class="align-middle inline-block min-w-full border-b border-gray-200">
+    <table class="min-w-full">
+      <thead>
+        <tr class="border-t border-gray-200">
+          <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <span class="lg:pl-2">Domain</span>
+          </th>
+          <th class="hidden md:table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+          <th class="pr-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-100">
+        {% for domain in domains %}
+        <tr>
+          <td class="px-6 py-3 max-w-0 w-full whitespace-nowrap text-sm font-medium text-gray-900">
+            <div class="flex items-center space-x-3 lg:pl-2">
+              <div class="flex-shrink-0 w-2.5 h-2.5 rounded-full bg-pink-600" aria-hidden="true"></div>
+              <a href="{% url "web_domain_edit" connection_guid=connection_guid guid=domain.guid %}"
+                class="truncate hover:text-gray-600">
+                <span>
+                  {{domain.domain}}
+                </span>
+              </a>
+            </div>
+          </td>
+          <td class="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 text-right">{{domain.created_at}}</td>
+          <td class="px-6 py-3 whitespace-nowrap text-right text-sm font-medium">
+            <a href="{% url "web_domain_edit" connection_guid=connection_guid guid=domain.guid %}"
+              class="text-indigo-600 hover:text-indigo-900">
+              Edit
+            </a>
+          </td>
+        </tr>
 
-<div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-  <table class="min-w-full divide-y divide-gray-200">
-    <thead class="bg-gray-50">
-      <tr>
-        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-          Domain
-        </th>
-        <th scope="col" class="relative px-6 py-3">
-          <span class="sr-only">Edit</span>
-        </th>
-      </tr>
-    </thead>
-    <tbody class="bg-white divide-y divide-gray-200">
-    {% for domain in domains %}
-      <tr>
-        <td class="px-6 py-4 whitespace-nowrap">
-          <div class="text-sm text-gray-500">{{domain.domain}}</div>
-        </td>
-        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-          <a href="{% url "web_domain_detail" connection_guid=connection_guid guid=domain.guid %}" class="text-teal-600 hover:text-teal-900">
-            Edit
-          </a>
-        </td>
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>

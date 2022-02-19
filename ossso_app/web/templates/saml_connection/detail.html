@@ -2,15 +2,18 @@
 {% load rest_framework %}
 
 {% block content %}
-<div class="md:grid md:grid-cols-3 md:gap-6">
-  <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
-    <form method="post" action="{% url "web_connection_detail" organization_guid=organization_guid guid=guid %}">
-      {% csrf_token %}
-      {% render_form serializer template_pack='forms' %}
-      <div class="mt-1">
-        <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">Submit</button>
-      </div>
-    </form>
+<div class="border-b border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8">
+  <div class="flex-1 min-w-0">
+    <h1 class="text-lg font-medium leading-6 text-gray-900 sm:truncate">
+      {{ serializer.instance.provider }}
+    </h1>
+  </div>
+
+  <div class="mt-4 flex sm:mt-0 sm:ml-4">
+    <a href="{% url "web_connection_edit" guid=guid organization_guid=organization_guid%}" class="order-0 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:order-1 sm:ml-3">Edit</a>
+
+    <a href="{% url "web_domain_edit" connection_guid=guid guid="new" %}"
+      class="order-0 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:order-1 sm:ml-3">Add Domain</a>
   </div>
 </div>
 
