@@ -14,6 +14,7 @@ from api.serializers import (
 )
 from django.http.request import HttpRequest
 from django.shortcuts import redirect, render
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from rest_framework.views import APIView
 from rest_framework.renderers import TemplateHTMLRenderer
@@ -55,6 +56,8 @@ class Register(APIView):
 
 class OrganizationList(APIView):
     renderer_classes = [TemplateHTMLRenderer]
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
     template_name = "organization/list.html"
 
     def get(self, request: HttpRequest):

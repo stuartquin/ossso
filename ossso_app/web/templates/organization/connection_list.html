@@ -1,7 +1,7 @@
 {% load rest_framework %}
 
 {% block content %}
-<div class="hidden sm:block">
+<div class="sm:block">
   <div class="align-middle inline-block min-w-full border-b border-gray-200">
     <table class="min-w-full">
       <thead>
@@ -29,7 +29,7 @@
           </td>
           <td class="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 text-right">{{connection.created_at}}</td>
           <td class="px-6 py-3 whitespace-nowrap text-right text-sm font-medium">
-          <a href="{% url "web_connection_detail" organization_guid=organization_guid guid=connection.guid %}" class="text-indigo-600 hover:text-indigo-900">
+          <a href="{% url "web_connection_edit" organization_guid=organization_guid guid=connection.guid %}" class="text-indigo-600 hover:text-indigo-900">
               Edit
             </a>
           </td>

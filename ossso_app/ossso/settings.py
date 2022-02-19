@@ -163,6 +163,8 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
 }
 
-LOGIN_REDIRECT_URL = "/"
+LOGIN_URL = "/web/accounts/login/"
+LOGIN_REDIRECT_URL = "/web"
+LOGOUT_REDIRECT_URL = "/web/accounts/login/"
 
 SSO_BASE_URL = os.environ.get("SSO_BASE_URL", "localhost")

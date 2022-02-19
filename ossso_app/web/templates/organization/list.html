@@ -13,7 +13,7 @@
   </div>
 </div>
 
-<div class="hidden sm:block">
+<div class="sm:block">
   <div class="align-middle inline-block min-w-full border-b border-gray-200">
     <table class="min-w-full">
       <thead>
@@ -21,7 +21,7 @@
           <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
             <span class="lg:pl-2">Organization</span>
           </th>
-          <th class="px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Connections</th>
+          <th class="hidden md:table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Connections</th>
           <th class="hidden md:table-cell px-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
           <th class="pr-6 py-3 border-b border-gray-200 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
         </tr>
@@ -41,7 +41,7 @@
               </a>
             </div>
           </td>
-          <td class="px-6 py-3 text-sm text-gray-500 font-medium">
+          <td class="hidden md:table-cell px-6 py-3 text-sm text-gray-500 font-medium">
             <div class="flex items-center space-x-2">
               {% for connection in organization.samlconnection_set.all %}
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"> {{ connection.provider }} </span>
@@ -50,7 +50,7 @@
           </td>
           <td class="hidden md:table-cell px-6 py-3 whitespace-nowrap text-sm text-gray-500 text-right">{{organization.created_at}}</td>
           <td class="px-6 py-3 whitespace-nowrap text-right text-sm font-medium">
-            <a href="{% url "web_organization_detail" guid=organization.guid %}"
+            <a href="{% url "web_organization_edit" guid=organization.guid %}"
               class="text-indigo-600 hover:text-indigo-900">
               Edit
             </a>

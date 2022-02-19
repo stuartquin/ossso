@@ -17,6 +17,25 @@
   </div>
 </div>
 
+<div class="bg-white shadow overflow-hidden sm:rounded-lg m-4">
+  <div class="px-4 py-5 sm:px-6">
+    <h3 class="text-lg leading-6 font-medium text-gray-900">Connection Information</h3>
+    <p class="mt-1 max-w-2xl text-sm text-gray-500">Use to configure Service Provider (SP)</p>
+  </div>
+  <div class="border-t border-gray-200 px-4 py-5 sm:p-0">
+    <dl class="sm:divide-y sm:divide-gray-200">
+      <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+        <dt class="text-sm font-medium text-gray-500">SP Entity ID</dt>
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{serializer.instance.sp_entity_id}}</dd>
+      </div>
+      <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+        <dt class="text-sm font-medium text-gray-500">ACS URL</dt>
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{serializer.instance.acs_url}}</dd>
+      </div>
+    </dl>
+  </div>
+</div>
+
 {% if serializer.instance %}
   {% include "saml_connection/domain_list.html" with connection_guid=serializer.instance.guid domains=serializer.instance.domain_set.all %}
 {% endif %}
